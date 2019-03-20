@@ -1,0 +1,30 @@
+{
+  "name": "puppeteer-mlb-player-stats",
+  "version": "1.0.0",
+  "description": "Get MLB player stats(CSV) with puppeteer",
+  "author": "Colt45s",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node -T -D src/index.ts"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^0.0.44",
+    "@types/puppeteer": "^1.12.2",
+    "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "@typescript-eslint/parser": "^1.4.2",
+    "eslint": "^5.15.3",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "prettier": "^1.16.4",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "csv-stringify": "^5.3.0",
+    "inquirer": "^6.2.2",
+    "ora": "^3.2.0",
+    "puppeteer": "^1.13.0",
+    "tabletojson": "^1.0.4"
+  }
+}
