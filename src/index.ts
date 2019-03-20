@@ -63,7 +63,6 @@ const getStats = async (page: Page): Promise<Stats[]> => {
 }
 ;(async () => {
   const { startSpinner, stopSpinner } = createLoggerWithSpinner()
-
   const { url } = await ask()
 
   console.log()
@@ -81,12 +80,12 @@ const getStats = async (page: Page): Promise<Stats[]> => {
 
     stopSpinner(true)
     startSpinner(chalk.green('✔'), 'Getting Player Stats \n')
-    const stats = await getStats(page)
 
-    await page.waitFor(5000)
+    const stats = await getStats(page)
 
     stopSpinner(true)
     startSpinner(chalk.green('✔'), 'Writing CSV File \n')
+
     stringify(
       stats,
       { header: true, columns: Object.keys(stats[0]) },
