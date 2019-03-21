@@ -31,35 +31,30 @@ const ask = () => {
 
 const writeFile = async (url: string, output: any) => {
   const fileName = url.split('/').slice(-1)[0]
+  const targetDir = path.resolve(__dirname, '../results')
 
   try {
-    const targetDir = path.resolve(__dirname, '../results')
-
     !fs.existsSync(targetDir) && (await fs.promises.mkdir(targetDir))
 
     await fs.promises.writeFile(`${targetDir}/${fileName}.csv`, output)
   } catch (e) {
-    throw new Error(e)
+    throw e
   }
 }
 
 const getStats = async (page: Page): Promise<Stats[]> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const selector = '#careerTable'
-      await page.waitForSelector(selector)
+  try {
+    const selector = '#careerTable'
+    await page.waitForSelector(selector)
 
-      const html = await page.evaluate(tableSelector => {
-        return document.querySelector(tableSelector).innerHTML
-      }, `${selector} .responsive-datatable__scrollable > div`)
+    const html = await page.evaluate(tableSelector => {
+      return document.querySelector(tableSelector).innerHTML
+    }, `${selector} .responsive-datatable__scrollable > div`)
 
-      const stats = tabletojson.convert(html)[0]
-
-      resolve(stats)
-    } catch (e) {
-      reject(e)
-    }
-  })
+    return tabletojson.convert(html)[0]
+  } catch (e) {
+    throw e
+  }
 }
 ;(async () => {
   const { startSpinner, stopSpinner } = createLoggerWithSpinner()
