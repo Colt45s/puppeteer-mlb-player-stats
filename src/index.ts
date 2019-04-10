@@ -29,7 +29,7 @@ const ask = () => {
   return inquirer.prompt<Answers>(question)
 }
 
-const writeFile = async (url: string, output: any) => {
+const writeFile = async (url: string, output: any): Promise<void> => {
   const fileName = url.split('/').slice(-1)[0]
   const targetDir = path.resolve(__dirname, '../results')
 
@@ -56,6 +56,24 @@ const getStats = async (page: Page): Promise<Stats[]> => {
     throw e
   }
 }
+
+const createCsv = (stats: Stats[], url: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    stringify(
+      stats,
+      { header: true, columns: Object.keys(stats[0]) },
+      (err: any, output: any) => {
+        if (err) reject(err)
+
+        writeFile(url, output)
+          .then(() => resolve())
+          .catch(e => {
+            reject(e)
+          })
+      }
+    )
+  })
+}
 ;(async () => {
   const { startSpinner, stopSpinner } = createLoggerWithSpinner()
   const { url } = await ask()
@@ -79,17 +97,9 @@ const getStats = async (page: Page): Promise<Stats[]> => {
     const stats = await getStats(page)
 
     stopSpinner(true)
-    startSpinner(chalk.green('✔'), 'Writing CSV File \n')
+    startSpinner(chalk.green('✔'), 'Creating CSV File \n')
 
-    stringify(
-      stats,
-      { header: true, columns: Object.keys(stats[0]) },
-      async (err: any, output: any) => {
-        if (err) throw new Error(err)
-
-        await writeFile(url, output)
-      }
-    )
+    await createCsv(stats, url)
 
     stopSpinner(true)
     done(
