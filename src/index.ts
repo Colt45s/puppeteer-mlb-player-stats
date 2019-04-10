@@ -7,6 +7,10 @@ import chalk from 'chalk'
 import createLoggerWithSpinner from './createLoggerWithSpinner'
 import { info, error, done } from './logger'
 import path from 'path'
+import { promisify } from 'util'
+
+const mkdirAsync = promisify(fs.mkdir)
+const writeFileAsync = promisify(fs.writeFile)
 
 type Stats = {
   [key: string]: string
@@ -34,9 +38,9 @@ const writeFile = async (url: string, output: any): Promise<void> => {
   const targetDir = path.resolve(__dirname, '../results')
 
   try {
-    !fs.existsSync(targetDir) && (await fs.promises.mkdir(targetDir))
+    !fs.existsSync(targetDir) && (await mkdirAsync(targetDir))
 
-    await fs.promises.writeFile(`${targetDir}/${fileName}.csv`, output)
+    await writeFileAsync(`${targetDir}/${fileName}.csv`, output)
   } catch (e) {
     throw e
   }
@@ -63,13 +67,11 @@ const createCsv = (stats: Stats[], url: string): Promise<void> => {
       stats,
       { header: true, columns: Object.keys(stats[0]) },
       (err: any, output: any) => {
-        if (err) reject(err)
+        err && reject(err)
 
         writeFile(url, output)
           .then(() => resolve())
-          .catch(e => {
-            reject(e)
-          })
+          .catch(e => reject(e))
       }
     )
   })
